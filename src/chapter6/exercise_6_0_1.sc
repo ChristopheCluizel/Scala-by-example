@@ -2,13 +2,13 @@
 
 object exercise_6_0_1 {
 	
-	val val1 = new NonEmptySet(9, new NonEmptySet(10, EmptySet, EmptySet), EmptySet)
-                                                  //> val1  : NonEmptySet = {{.10.}9.}
-	val other = new NonEmptySet(14, new NonEmptySet(9, EmptySet, EmptySet), new NonEmptySet(16, EmptySet, EmptySet))
-                                                  //> other  : NonEmptySet = {{.9.}14{.16.}}
-	val unionVal = val1 union other           //> unionVal  : IntSet = {{.9{.10.}}14{.16.}}
-	val intersectionVal = other intersection val1
-                                                  //> intersectionVal  : IntSet = {{.10.}9.}
+	val val1 = new NonEmptySet(10, new NonEmptySet(9, EmptySet, EmptySet), EmptySet)
+                                                  //> val1  : NonEmptySet = {{.9.}10.}
+	val other = new NonEmptySet(9, EmptySet, EmptySet)
+                                                  //> other  : NonEmptySet = {.9.}
+	val unionVal = val1 union other           //> unionVal  : IntSet = {.9{.10.}}
+	val intersectionVal = val1 intersection other
+                                                  //> intersectionVal  : IntSet = {.9.}
 }
 
 trait IntSet {
@@ -45,7 +45,11 @@ class NonEmptySet(elem: Int, left: IntSet, right: IntSet) extends IntSet {
 	def union(other: IntSet): IntSet =
 		((left union right) union other) incl elem
 		
-	def intersection(other: IntSet): IntSet = other // TODO
+	def intersection(other: IntSet): IntSet = {
+		val res = (left intersection other) union (right intersection other)
+		if(other contains(elem)) res incl elem
+		else res
+	}
 		
 	override def toString: String = "{" + left + elem + right + "}"
 		
